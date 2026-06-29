@@ -1,0 +1,205 @@
+{
+  "language": "Хэл",
+  "connectionSpeed": "Холболтын Хурд",
+  "offline": "Сүлжээ унтарсан",
+  "loading": "Ачааллаж байна...",
+  "version": "Хувилбар",
+  "name": "Нэр",
+  "amount": "Мөнгөн дүн",
+  "noPlayers": "Тоглогч байхгүй",
+  "noTableSelected": "Ширээ сонгоогүй байна",
+  "variant": {
+    "texas": "Тексас Холдэм",
+    "holdem": "Holdem",
+    "omaha": "Омаха",
+    "unknown": "Тодорхойгүй"
+  },
+  "actions": {
+    "play": "Тоглох",
+    "actions": "Үйлдлүүд",
+    "full": "Дүүрсэн"
+  },
+  "tableList": {
+    "index": "Д/д",
+    "name": "Нэр",
+    "variant": "Төрөл",
+    "buyIn": "Оролт",
+    "players": "Тоглогч",
+    "blinds": "Blinds",
+    "table": "Ширээ"
+  },
+  "homePage": {
+    "tabs": {
+      "tables": "Ширээ",
+      "tournament": "Тэмцээн"
+    },
+    "tableTypes": {
+      "texas": "Тексас Холдэм",
+      "omaha": "Омаха"
+    },
+    "tournament": {
+      "comingSoon": "Тэмцээн одоогийн байдлаар хөгжүүлэлтэнд байгаа."
+    }
+  },
+  "userHeader": {
+    "menu": "Цэс",
+    "login": "Нэвтрэх",
+    "signup": "Бүртгүүлэх",
+    "register": "Бүртгүүлэх",
+    "forgotPassword": "Нууц үг сэргээх",
+    "adminMenu": "Админ цэс",
+    "userProfile": "Хэрэглэгч",
+    "logout": "Гарах",
+    "info": "Мэдээлэл",
+    "balanceLabel": "Үлдэгдэл :",
+    "usernameLabel": "Хэрэглэгчийн нэр",
+    "aria": {
+      "menuButton": "Цэс",
+      "userBalance": "Хэрэглэгчийн үлдэгдэл",
+      "avatar": "Хэрэглэгчийн дүрс"
+    }
+  },
+  "userWithdrawPage": {
+    "balanceTitle": "Үлдэгдэл :",
+    "balance": "Үлдэгдэл :",
+    "locked": "Түгжигдсэн :",
+    "tabs": {
+      "deposit": "Цэнэглэлт",
+      "withdraw": "Таталт",
+      "outcome": "Тоглолтын түүх"
+    }
+  },
+  "withdrawal": {
+    "code": "Код",
+    "requestDate": "Хүсэлтийн огноо",
+    "amount": "Дүн",
+    "approvedBy": "Баталсан Админ",
+    "approveDate": "Баталсан огноо",
+    "status": "Төлөв",
+    "approved": "Батлагдсан",
+    "notApproved": "Батлагдаагүй",
+    "createTitle": "Татан авалт үүсгэх",
+    "amountRequired": "Дүнг оруулна уу!",
+    "amountRange": "Дүн {{min}} - {{max}} хооронд байх ёстой",
+    "submit": "Илгээх",
+    "back": "Буцах",
+    "createButton": "Үүсгэх",
+    "createSuccess": "Татан авалт амжилттай үүслээ",
+    "unknownError": "Алдаа гарлаа",
+    "history": "Түүх",
+    "amountTooHigh": "Хэт их",
+    "amountTooLow": "Хэт бага",
+    "noData": "Таталтын түүх олдонгүй!"
+  },
+  "deposit": {
+    "code": "Код",
+    "amount": "Дүн",
+    "createDate": "Батлагдсан огноо",
+    "noData": "Таталтын түүх олдонгүй!"
+  },
+  "outcome": {
+    "code": "Код",
+    "type": {
+      "title": "Төрөл",
+      "gameplay": "Тоглолтын хожил",
+      "bonus": "Бонус",
+      "recharge": "Явцын цэнэглэлт",
+      "leave_seat": "Босох",
+      "buy_in": "Суух"
+    },
+    "amount": "Дүн",
+    "date": "Огноо"
+  },
+  "profileForm": {
+    "usernameLabel": "Тоглогчийн нэр",
+    "usernamePlaceholder": "Тоглогчийн нэрээ оруулна уу",
+    "emailLabel": "Цахим хаяг",
+    "emailPlaceholder": "Цахим хаягаа оруулна уу",
+    "title": "Хэрэглэгчийн мэдээлэл"
+  },
+  "loginForm": {
+    "success": "Амжилттай нэвтэрлээ",
+    "error": "Нэвтрэхэд алдаа гарлаа",
+    "usernameLabel": "Тоглогчийн нэр",
+    "usernamePlaceholder": "Тоглогчийн нэрээ оруулна уу",
+    "passwordLabel": "Нууц үг",
+    "passwordPlaceholder": "Нууц үгээ оруулна уу",
+    "loginButton": "Нэвтрэх",
+    "noAccount": "Та өмнө бүртгүүлж байгаагүй юу?",
+    "register": "Бүртгүүлэх",
+    "forgotPassword": "Нууц үг сэргээх",
+    "login": "Нэвтрэх",
+    "loading": "Ачааллаж байна..."
+  },
+  "registerForm": {
+    "emailLabel": "Цахим хаяг",
+    "emailPlaceholder": "Цахим хаягаа оруулна уу",
+    "usernameLabel": "Тоглогчийн нэр",
+    "usernamePlaceholder": "Тоглогчийн нэрээ оруулна уу",
+    "passwordLabel": "Нууц үг",
+    "passwordPlaceholder": "Нууц үгээ оруулна уу",
+    "passwordRepeatLabel": "Нууц үг давтах",
+    "passwordRepeatPlaceholder": "Нууц үгээ дахин оруулна уу",
+    "bankLabel": "Банк",
+    "bankPlaceholder": "Банк",
+    "accountNumberLabel": "Дансны дугаар",
+    "accountNumberPlaceholder": "Дансны дугаар",
+    "registerButton": "Бүртгүүлэх",
+    "haveAccount": "Та өмнө бүртгэл үүсгэж байсан уу?",
+    "loginLink": "Нэвтрэх",
+    "successMessage": "Амжилттай бүртгэгдлээ",
+    "errorMessage": "Нэвтрэхэд алдаа гарлаа: ",
+    "errorMessageGeneric": "Нэвтрэхэд алдаа гарлаа",
+    "loading": "Ачааллаж байна..."
+  },
+  "seat": "Суух",
+  "modal": {
+    "recharge": "Цэнэглэх",
+    "sit": "Суух",
+    "amount": "Хэмжээ"
+  },
+  "forgotPasswordForm": {
+    "emailLabel": "Цахим хаяг",
+    "emailPlaceholder": "Цахим хаягаа оруулна уу",
+    "sendButton": "Мэйл илгээх"
+  },
+  "buttons": {
+    "Recharge": "Дахин цэнэглэх",
+    "Replay": "Дахин үзэх",
+    "Information": "Мэдээлэл",
+    "Settings": "Тохиргоо",
+    "Sit Out": "Суудлаас босох",
+    "Full Screen": "Дэлгэц дүүрэн",
+    "Leave Table": "Гарах",
+    "Home": "Нүүр хуудас"
+  },
+
+  "settings": {
+    "title": "Тохиргоо",
+    "enableSounds": "Дууг асаах",
+    "enableAnimations": "Анимацийг асаах",
+    "autoMuck": "Автомат хаях",
+    "fourColorDeck": "Дөрвөн өнгийн хөзөр",
+    "accountInfo": "Хэрэглэгчийн мэдээлэл",
+    "username": "Хэрэглэгчийн нэр",
+    "email": "Имэйл",
+    "language": "Хэл",
+    "music": "Хөгжим",
+    "backgroundMusic": "Арын хөгжим",
+    "theme": "Theme",
+    "darkTheme": "Dark Theme",
+    "on": "On",
+    "off": "Off",
+    "logout": "Гарах"
+  },
+  "contest": {
+    "comingSoonTitle": "Тун удахгүй!",
+    "comingSoonDescription": "Тамирчдыг том шагнал хүлээж байна!",
+    "prizeDetails": "10 сая ₮ шагналын сантай тэмцээн!",
+    "registrationSoon": "Бүртгэл удахгүй эхэлнэ"
+  },
+  "filters": {
+    "blinds": "Ул",
+    "activePlayers": "Идэвхитэй ширээ"
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "language": "Language",
+  "connectionSpeed": "Connection Speed",
+  "offline": "Offline",
+  "loading": "Loading...",
+  "version": "Version",
+  "name": "Name",
+  "amount": "Amount",
+  "noPlayers": "No players",
+  "noTableSelected": "No table selected",
+  "variant": {
+    "texas": "Texas Hold'em",
+    "holdem": "Hold'em",
+    "omaha": "Omaha",
+    "unknown": "Unknown"
+  },
+  "actions": {
+    "play": "Play",
+    "actions": "Actions",
+    "full": "Full"
+  },
+  "tableList": {
+    "index": "No.",
+    "name": "Name",
+    "variant": "Variant",
+    "buyIn": "Buy-In",
+    "players": "Players",
+    "blinds": "Blinds",
+    "table": "Table"
+  },
+  "homePage": {
+    "tabs": {
+      "tables": "TABLES",
+      "tournament": "Tournament"
+    },
+    "tableTypes": {
+      "texas": "TEXAS HOLD'EM",
+      "omaha": "OMAHA"
+    },
+    "tournament": {
+      "comingSoon": "Tournament is currently under development."
+    }
+  },
+  "userHeader": {
+    "menu": "Menu",
+    "login": "Login",
+    "signup": "Sign Up",
+    "register": "Register",
+    "forgotPassword": "Forgot Password",
+    "adminMenu": "Admin Menu",
+    "userProfile": "User Profile",
+    "logout": "Logout",
+    "info": "Info",
+    "balanceLabel": "Balance:",
+    "usernameLabel": "Username",
+    "aria": {
+      "menuButton": "Menu",
+      "userBalance": "User balance",
+      "avatar": "User avatar"
+    }
+  },
+  "userWithdrawPage": {
+    "balance": "Balance :",
+    "locked": "Locked :",
+    "tabs": {
+      "deposit": "Deposit",
+      "withdraw": "Withdraw",
+      "outcome": "Game History"
+    }
+  },
+  "withdrawal": {
+    "code": "Code",
+    "requestDate": "Request Date",
+    "amount": "Amount",
+    "approvedBy": "Approved By",
+    "approveDate": "Approve Date",
+    "status": "Status",
+    "approved": "Approved",
+    "notApproved": "Not Approved",
+    "createTitle": "Create Withdrawal",
+    "amountRequired": "Please enter amount!",
+    "amountRange": "Amount must be between {{min}} and {{max}}",
+    "submit": "Submit",
+    "back": "Back",
+    "createButton": "Create",
+    "createSuccess": "Withdrawal created successfully",
+    "unknownError": "Unknown error occurred",
+    "history": "History",
+    "amountTooHigh": "Too much",
+    "amountTooLow": "Too low",
+    "noData": "No withdrawals found!"
+  },
+  "deposit": {
+    "code": "Code",
+    "amount": "Amount",
+    "createDate": "Approved Date",
+    "noData": "No withdrawals found!"
+  },
+  "outcome": {
+    "code": "Code",
+    "type": {
+      "title": "Type",
+      "gameplay": "Gameplay Win",
+      "bonus": "Bonus",
+      "recharge": "In-Play Recharge",
+      "leave_seat": "Leave Seat",
+      "buy_in": "Buy In"
+    },
+    "amount": "Amount",
+    "date": "Date"
+  },
+  "profileForm": {
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "title": "Profile"
+  },
+  "loginForm": {
+    "success": "Successfully logged in",
+    "error": "Login failed",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "loginButton": "Login",
+    "noAccount": "Don't have an account?",
+    "register": "Register",
+    "forgotPassword": "Forgot password?",
+    "login": "Login",
+    "loading": "Loading..."
+  },
+  "registerForm": {
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "passwordRepeatLabel": "Repeat Password",
+    "passwordRepeatPlaceholder": "Re-enter your password",
+    "bankLabel": "Bank",
+    "bankPlaceholder": "Select your bank",
+    "accountNumberLabel": "Account Number",
+    "accountNumberPlaceholder": "Enter your account number",
+    "registerButton": "Register",
+    "haveAccount": "Already have an account?",
+    "loginLink": "Login",
+    "successMessage": "Registered successfully",
+    "errorMessage": "Registration error: ",
+    "errorMessageGeneric": "An error occurred during registration",
+    "loading": "Loading..."
+  },
+  "seat": "Sit",
+  "modal": {
+    "recharge": "Recharge",
+    "sit": "Take seat",
+    "amount": "Amount"
+  },
+  "forgotPasswordForm": {
+    "emailLabel": "Email",
+    "emailPlaceholder": "Please enter your email",
+    "sendButton": "Send Email"
+  },
+  "buttons": {
+    "Recharge": "Add Chips",
+    "Replay": "Replay",
+    "Information": "Information",
+    "Settings": "Settings",
+    "Sit Out": "Sit Out",
+    "Full Screen": "Full Screen",
+    "Leave Table": "Leave Table",
+    "Home": "Lobby"
+  },
+  "settings": {
+    "title": "Settings",
+    "enableSounds": "Enable Sounds",
+    "enableAnimations": "Enable Animations",
+    "autoMuck": "Auto Muck",
+    "fourColorDeck": "Four Color Deck",
+    "accountInfo": "Account Information",
+    "username": "Username",
+    "email": "Email",
+    "language": "Language",
+    "music": "Music",
+    "backgroundMusic": "Background Music",
+    "theme": "Theme",
+    "darkTheme": "Dark Theme",
+    "on": "On",
+    "off": "Off",
+    "logout": "Logout"
+  },
+  "contest": {
+    "comingSoonTitle": "Big Tournament Coming Soon!",
+    "comingSoonDescription": "Get ready for the chance to win big!",
+    "prizeDetails": "The prize for this contest is 10 million ₮!",
+    "registrationSoon": "Registration Opens Soon"
+  },
+  "filters": {
+    "blinds": "Blinds",
+    "activePlayers": "Active Players"
+  }
+}

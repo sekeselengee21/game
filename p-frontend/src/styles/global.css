@@ -1,0 +1,410 @@
+@font-face {
+  font-family: "Bonus";
+  src: url("../assets/fonts/Vipnagorgialla Bd.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================
+   GLOBAL STYLES
+   Base styles, resets, animations, utilities
+   ============================================ */
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+/* ⚡ PERFORMANCE OPTIMIZED: CSS animations with GPU acceleration */
+
+/* Winner animation */
+.winner-plus-animate {
+  animation: winner-slide-up 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes winner-slide-up {
+  from {
+    transform: translateY(200px) scale(0.8) translateZ(0);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px) scale(1) translateZ(0);
+    opacity: 1;
+  }
+}
+
+/* Welcome modal word animation - OPTIMIZED: Remove blur (expensive) */
+.welcome-word {
+  animation: welcome-fade-in 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+@keyframes welcome-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+/* Card dealing animation — GG Poker style: card flies from dealer (center)
+   to the player's hole-card slot, no rotation.
+   Positions are computed in JS (px) and passed via CSS vars. */
+.dealing-cards-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+.dealing-card-animate {
+  position: absolute;
+  left: 0;
+  top: 0;
+  /* Use transform-only positioning — animating left/top triggers layout
+     repaints that force nearby card images to re-rasterize at subpixel
+     positions, causing intermittent blur. transform is compositor-only. */
+  transform: translate(calc(var(--from-x) * 1px), calc(var(--from-y) * 1px)) translate(-50%, -50%) scale(0.7);
+  opacity: 0;
+  animation-name: dealCard;
+  animation-timing-function: cubic-bezier(0.15, 0.8, 0.35, 1);
+  animation-fill-mode: forwards;
+  will-change: transform, opacity;
+}
+@keyframes dealCard {
+  0% {
+    transform: translate(calc(var(--from-x) * 1px), calc(var(--from-y) * 1px)) translate(-50%, -50%) scale(0.7);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(var(--to-x) * 1px), calc(var(--to-y) * 1px)) translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+/* Dealing animation cards must fill their JS-sized container.
+   The global .back-card { width: 40px } rule would otherwise override
+   width: 100% from .poker-card-image and make cards always 40px. */
+.dealing-card-animate .poker-card-image {
+  width: 100%;
+  height: 100%;
+}
+/* ============================================
+   LOADING STATES
+   ============================================ */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #fff;
+  text-align: center;
+  padding: 1rem;
+}
+
+.spinner {
+  width: 3vw;
+  height: 3vw;
+  border: 5px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Optional: adjust text size for different screen sizes */
+.loading-container p {
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+}
+
+/* ============================================
+   SMOOTH SCROLLING
+   ============================================ */
+/* ⚡ SMOOTH SCROLLING OPTIMIZATIONS */
+
+/* Enable hardware acceleration for scroll containers */
+.poker-chat-messages,
+.hand-history-container,
+.table-card-container {
+  /* GPU-accelerated scrolling */
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
+
+  /* Smooth scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.2);
+}
+
+/* Custom scrollbar for webkit browsers */
+.poker-chat-messages::-webkit-scrollbar,
+.hand-history-container::-webkit-scrollbar,
+.table-card-container::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.poker-chat-messages::-webkit-scrollbar-track,
+.hand-history-container::-webkit-scrollbar-track,
+.table-card-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.poker-chat-messages::-webkit-scrollbar-thumb,
+.hand-history-container::-webkit-scrollbar-thumb,
+.table-card-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.poker-chat-messages::-webkit-scrollbar-thumb:hover,
+.hand-history-container::-webkit-scrollbar-thumb:hover,
+.table-card-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Prevent scroll jank */
+* {
+  /* Prevent text selection during animations */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection where needed */
+input,
+textarea,
+.selectable-text,
+.poker-chat-messages,
+.hand-history-container {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+/* ⚡ PERFORMANCE OPTIMIZATIONS FOR SMOOTH ANIMATIONS */
+
+/* 
+  🎯 GPU-ACCELERATED ANIMATIONS
+  Use transform and opacity for 60fps animations
+  Avoid: width, height, top, left, margin, padding
+*/
+
+/* Global performance hints */
+* {
+  /* Disable outline flashing */
+  -webkit-tap-highlight-color: transparent;
+
+  /* Smooth font rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Force GPU acceleration for animated elements */
+.gpu-accelerated {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Smooth 60fps transitions */
+.smooth-transition {
+  transition:
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Optimize shadow rendering */
+.optimized-shadow {
+  /* Use transform instead of box-shadow for hover */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.optimized-shadow:hover {
+  transform: translateY(-2px);
+  /* Don't animate box-shadow - too expensive */
+}
+
+/* Prevent layout thrashing */
+.prevent-layout-shift {
+  contain: layout style paint;
+}
+
+/* Container queries optimization */
+.poker-container {
+  container-type: inline-size;
+}
+/* ⚡ OPTIMIZED: Import CSS animations to replace framer-motion */
+
+:root {
+  --background-color: #150c0c;
+  --background: linear-gradient(135deg, #1e0e0c, #110806);
+  --text-color: #ffffff;
+  --primary-color: #c8192e;
+  --secondary-color: #9b1020;
+  --accent-color: #f0c040;
+  --shadow-color: rgba(0, 0, 0, 0.7);
+  --menu-background: #0c0807;
+  --button-color: #c8192e;
+  --btn-color: #3a1a1f;
+  --homepage-color: #0e0a09;
+  --table-card: #1e1412;
+  --table-bg: #120e0d;
+  --homepage-outer-color: #120e0d;
+  --border-color: rgba(200, 25, 46, 0.2);
+  --number-color: #fff0c1;
+  --modal-bg: #1c1210;
+  --input-bg: #1e1412;
+  --font-ui: "Roboto Condensed", sans-serif;
+  --money-color: #4ade80;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  --purple-gradient-bg: radial-gradient(circle at center, #9745ca 0%, #1a1230 45%, #080b14 70%);
+  --purple-main: #c8192e;
+  --dark-bg: #180e0c;
+  --dark-gradient: linear-gradient(180deg, #1c1210 1.04%, #2a1815 100%);
+  --dark-main: #110e0d;
+  --btn-shadow: 0 0.125em 0.125em 0 rgba(0, 0, 0, 0.3);
+  --bg-gradient:
+    radial-gradient(50% 54% at 50% 0%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.4) 100%);
+  --hover-bg: rgba(255, 255, 255, 0.07);
+  --green-btn: #c8192e;
+  --sm-border-radius: 0.25em;
+  --table-card-blue: linear-gradient(rgba(44, 125, 160, 0.4) 0%, rgba(44, 125, 160, 0.15) 100%), rgb(32, 26, 24);
+  --table-card-blue-pale: linear-gradient(rgba(137, 194, 217, 0.4) 0%, rgba(137, 194, 217, 0.15) 100%), rgb(32, 26, 24);
+  --table-card-yellow: linear-gradient(rgba(240, 192, 64, 0.4) 0%, rgba(240, 192, 64, 0.15) 100%), rgb(32, 26, 24);
+  --table-card-dark: linear-gradient(rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.15) 100%), rgb(32, 26, 24);
+  --top-gradient:
+    radial-gradient(50% 54% at 50% 0%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.4) 100%);
+  --sm-border: 0.0625em solid rgba(255, 255, 255, 0.08);
+  --holecards-offset: -40px;
+  --table-card-bg: linear-gradient(rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.15) 100%), rgb(32, 26, 24);
+  --table-card-bg-high: linear-gradient(rgba(200, 25, 46, 0.45) 0%, rgba(200, 25, 46, 0.15) 100%), rgb(32, 26, 24);
+  --table-card-bg-medium: linear-gradient(rgba(100, 149, 237, 0.4) 0%, rgba(100, 149, 237, 0.15) 100%), rgb(32, 26, 24);
+  --table-card-bg-superhigh: linear-gradient(rgba(200, 25, 46, 0.55) 0%, rgba(200, 25, 46, 0.2) 100%), rgb(32, 26, 24);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --holecards-offset: -30px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root,
+main {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  background: var(--dark-main);
+  background-attachment: fixed;
+  max-width: 1920px;
+  margin: auto;
+  overflow-x: hidden;
+}
+
+:lang(en) {
+  font-family: var(--font-ui);
+}
+
+.fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  z-index: 9999;
+  cursor: pointer;
+  user-select: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  font-style: italic;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+/* ===== GLOBAL SCROLLBAR ===== */
+
+/* ===== Minimal scrollbar for WebKit browsers ===== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* track blends into background */
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2); /* subtle light thumb */
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3); /* slightly more visible on hover */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
