@@ -1,0 +1,17 @@
+[Unit]
+Description=Poker Backend Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/backend
+ExecStart=/usr/bin/java -Xms1G -Xmx2G -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+UseStringDeduplication -Dquarkus.http.io-threads=4 -Dquarkus.vertx.worker-pool-size=20 -jar /opt/backend/app.jar
+ExecStop=/bin/kill -15 $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=append:/opt/backend/logs/app.log
+StandardError=append:/opt/backend/logs/app.log
+
+[Install]
+WantedBy=multi-user.target

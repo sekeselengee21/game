@@ -1,0 +1,9 @@
+.backend-git-backup/
+
+# Local backend secrets and machine-specific config.
+backend/config/application.properties
+backend/config/application.properties.backup_*
+backend/config/*.pem
+backend/config/config.pgerd
+backend/config/botusers.txt
+backend/config/test.csv
