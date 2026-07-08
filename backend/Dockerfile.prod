@@ -1,0 +1,28 @@
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+
+WORKDIR /app
+
+COPY pom.xml ./
+COPY .mvn .mvn
+COPY mvnw mvnw
+RUN chmod +x mvnw && ./mvnw -B dependency:go-offline
+
+COPY src ./src
+RUN ./mvnw -B package
+
+FROM eclipse-temurin:21-jre-alpine
+
+WORKDIR /app
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+COPY --from=build /app/target/quarkus-app/lib/ /app/lib/
+COPY --from=build /app/target/quarkus-app/*.jar /app/
+COPY --from=build /app/target/quarkus-app/app/ /app/app/
+COPY --from=build /app/target/quarkus-app/quarkus/ /app/quarkus/
+
+USER appuser
+
+EXPOSE 8080
+
+CMD ["java", "-jar", "quarkus-run.jar"]

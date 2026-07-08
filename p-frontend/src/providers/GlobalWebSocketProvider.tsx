@@ -6,9 +6,10 @@ import { setUserBalance } from "../providers/auth-slice";
 import { useMeQuery, userApi } from "../api/user";
 import { adminApi } from "../api/admin";
 
-const websocketURL = import.meta.env.VITE_BACKEND_URL.replace(/^https?:\/\/(.*)\/api$/, "wss://$1") + "/ws/global";
+const backendURL = import.meta.env.VITE_BACKEND_URL.replace(/\/api\/?$/, "");
+const websocketURL = backendURL.replace(/^http/, "ws") + "/ws/global";
 
-const jackpotAPIURL = import.meta.env.VITE_BACKEND_URL + "/api/v1/jackpot/current";
+const jackpotAPIURL = backendURL + "/api/v1/jackpot/current";
 
 interface GlobalWSContextType {
   ws: WebSocket | null;

@@ -131,10 +131,10 @@ public class UserService {
                                 user.setPassword(isAdmin ? record.get(POKER_USER.PASSWORD) : null);
 
                                 UserBalance balance = new UserBalance();
-                                balance.setUserId(record.get(POKER_USER_BALANCE.USER_ID));
-                                balance.setBalance(record.get(POKER_USER_BALANCE.BALANCE));
-                                balance.setLockedAmount(record.get(POKER_USER_BALANCE.LOCKED_AMOUNT));
-                                balance.setUserId(record.get(POKER_USER_BALANCE.USER_ID));
+                                balance.setUserId(record.get(POKER_USER.USER_ID));
+                                balance.setBalance(record.get(POKER_USER_BALANCE.BALANCE) != null ? record.get(POKER_USER_BALANCE.BALANCE) : 0);
+                                balance.setLockedAmount(record.get(POKER_USER_BALANCE.LOCKED_AMOUNT) != null ? record.get(POKER_USER_BALANCE.LOCKED_AMOUNT) : 0);
+                                balance.setBonusBalance(record.get(POKER_USER_BALANCE.BONUS_BALANCE) != null ? record.get(POKER_USER_BALANCE.BONUS_BALANCE) : 0);
 
                                 user.setUserBalance(balance);
 
@@ -151,15 +151,29 @@ public class UserService {
                 .map(unused -> {
                     try {
                         String hashedPassword = BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray());
-                        Integer userId = context.insertInto(POKER_USER)
-                                .set(POKER_USER.EMAIL, user.getEmail())
-                                .set(POKER_USER.USERNAME, user.getUsername())
-                                .set(POKER_USER.PASSWORD, hashedPassword)
-                                .set(POKER_USER.BANK_NAME, user.getBankName())
-                                .set(POKER_USER.ACCOUNT_NUMBER, user.getAccountNumber())
-                                .set(POKER_USER.ROLE, User.Role.USER.name())
-                                .returning(POKER_USER.USER_ID)
-                                .fetchOne(POKER_USER.USER_ID);
+                        Integer userId = context.transactionResult(configuration -> {
+                            DSLContext ctx = DSL.using(configuration);
+                            Integer newUserId = ctx.insertInto(POKER_USER)
+                                    .set(POKER_USER.EMAIL, user.getEmail())
+                                    .set(POKER_USER.USERNAME, user.getUsername())
+                                    .set(POKER_USER.PASSWORD, hashedPassword)
+                                    .set(POKER_USER.BANK_NAME, user.getBankName())
+                                    .set(POKER_USER.ACCOUNT_NUMBER, user.getAccountNumber())
+                                    .set(POKER_USER.ROLE, User.Role.USER.name())
+                                    .returning(POKER_USER.USER_ID)
+                                    .fetchOne(POKER_USER.USER_ID);
+
+                            ctx.insertInto(POKER_USER_BALANCE)
+                                    .set(POKER_USER_BALANCE.USER_ID, newUserId)
+                                    .set(POKER_USER_BALANCE.BALANCE, 0)
+                                    .set(POKER_USER_BALANCE.LOCKED_AMOUNT, 0)
+                                    .set(POKER_USER_BALANCE.BONUS_BALANCE, 0)
+                                    .onConflict(POKER_USER_BALANCE.USER_ID)
+                                    .doNothing()
+                                    .execute();
+
+                            return newUserId;
+                        });
                         return generateJWT(userId, User.Role.USER.name());
                     } catch (IntegrityConstraintViolationException integrityException) {
                         if (integrityException.getCause() instanceof PSQLException psqlException) {
@@ -423,20 +437,31 @@ public class UserService {
     public Uni<UserBalance> fetchUserBalance(Integer userId) {
         return Uni.createFrom().voidItem()
                 .emitOn(QUERY_THREADS)
-                .map(unused -> context.selectFrom(POKER_USER_BALANCE)
-                        .where(POKER_USER_BALANCE.USER_ID.eq(userId))
-                        .fetchOneInto(UserBalance.class)) 
-                .onItem().transform(userBalance -> {
-                    if (userBalance != null) {
-                        return userBalance;
-                    } else {
-                        UserBalance newUserBalance = new UserBalance();
-                        newUserBalance.setUserId(userId);
-                        newUserBalance.setBalance(0);
-                        newUserBalance.setLockedAmount(0);
-                        newUserBalance.setBonusBalance(0); 
-                        return newUserBalance;
+                .map(unused -> {
+                    var record = context.selectFrom(POKER_USER_BALANCE)
+                            .where(POKER_USER_BALANCE.USER_ID.eq(userId))
+                            .fetchOne();
+
+                    if (record == null) {
+                        context.insertInto(POKER_USER_BALANCE)
+                                .set(POKER_USER_BALANCE.USER_ID, userId)
+                                .set(POKER_USER_BALANCE.BALANCE, 0)
+                                .set(POKER_USER_BALANCE.LOCKED_AMOUNT, 0)
+                                .set(POKER_USER_BALANCE.BONUS_BALANCE, 0)
+                                .onConflict(POKER_USER_BALANCE.USER_ID)
+                                .doNothing()
+                                .execute();
+
+                        record = context.selectFrom(POKER_USER_BALANCE)
+                                .where(POKER_USER_BALANCE.USER_ID.eq(userId))
+                                .fetchOne();
                     }
+
+                    UserBalance userBalance = record.into(UserBalance.class);
+                    if (userBalance.getBalance() == null) userBalance.setBalance(0);
+                    if (userBalance.getLockedAmount() == null) userBalance.setLockedAmount(0);
+                    if (userBalance.getBonusBalance() == null) userBalance.setBonusBalance(0);
+                    return userBalance;
                 });
     }
 
@@ -744,18 +769,17 @@ public class UserService {
 
     public Uni<UserBalance> updateUserBalance(Integer userId, int newBalance, int newBonus) {
         return Uni.createFrom().item(() -> {
-            var record = dsl.selectFrom(POKER_USER_BALANCE)
-                            .where(POKER_USER_BALANCE.USER_ID.eq(userId))
-                            .fetchOne();
-
-            if (record == null) {
-                throw new RuntimeException("User balance record not found");
-            }
-
-            // Update balance and bonus
-            record.setBalance(newBalance);
-            record.setBonusBalance(newBonus);
-            record.store();
+            var record = dsl.insertInto(POKER_USER_BALANCE)
+                    .set(POKER_USER_BALANCE.USER_ID, userId)
+                    .set(POKER_USER_BALANCE.BALANCE, newBalance)
+                    .set(POKER_USER_BALANCE.LOCKED_AMOUNT, 0)
+                    .set(POKER_USER_BALANCE.BONUS_BALANCE, newBonus)
+                    .onConflict(POKER_USER_BALANCE.USER_ID)
+                    .doUpdate()
+                    .set(POKER_USER_BALANCE.BALANCE, newBalance)
+                    .set(POKER_USER_BALANCE.BONUS_BALANCE, newBonus)
+                    .returning()
+                    .fetchOne();
 
             // Map back to your UserBalance object
             UserBalance userBalance = new UserBalance();

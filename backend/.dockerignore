@@ -1,5 +1,7 @@
-*
-!target/*-runner
-!target/*-runner.jar
-!target/lib/*
-!target/quarkus-app/*
+.git/
+.gitignore
+config/application.properties
+config/application.properties.backup_*
+config/*.pem
+config/botusers.txt
+config/test.csv

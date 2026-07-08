@@ -21,7 +21,11 @@ function RootWrapper() {
   const [progress, setProgress] = useState(0);
   const [showLoading, setShowLoading] = useState(true);
 
-  const { data: tableData, isFetching } = useFetchTablesQuery();
+  const {
+    data: tableData = [],
+    isError: isTablesError,
+    isFetching,
+  } = useFetchTablesQuery();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -36,22 +40,22 @@ function RootWrapper() {
 
   useEffect(() => {
     const hasUser = !!userInfo?.userId;
-    const hasTables = !!tableData?.length;
+    const tablesSettled = (!isFetching && Array.isArray(tableData)) || isTablesError;
     const isWsOpen = ws?.readyState === WebSocket.OPEN;
 
     if (!hasUser) {
-      if (hasTables && !isFetching) setReady(true);
+      if (tablesSettled) setReady(true);
     } else {
-      if (hasTables && isWsOpen && !isFetching) setReady(true);
+      if (tablesSettled && isWsOpen) setReady(true);
       else if (!isWsOpen) {
         const handleOpen = () => {
-          if (!isFetching && hasTables) setReady(true);
+          if (tablesSettled) setReady(true);
         };
         ws?.addEventListener("open", handleOpen);
         return () => ws?.removeEventListener("open", handleOpen);
       }
     }
-  }, [ws, userInfo, isFetching, tableData]);
+  }, [ws, userInfo, isFetching, tableData, isTablesError]);
 
   useEffect(() => {
     if (progress >= 100) {

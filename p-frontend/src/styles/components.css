@@ -3216,8 +3216,24 @@ input[type="checkbox"]:disabled ~ .checkbox-label {
   font-weight: bold;
   font-size: 16px;
   border-radius: 8px;
+  border: 0;
   cursor: pointer;
+  font-family: inherit;
   width: 50%;
+}
+
+.avatar-upload-hint {
+  width: 50%;
+  margin-top: 10px;
+  color: #c7c7c7;
+  font-size: 13px;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.avatar-upload-button:focus-visible {
+  outline: 2px solid var(--btn-color);
+  outline-offset: 3px;
 }
 
 .avatar-upload-button:active {
@@ -3243,6 +3259,15 @@ input[type="checkbox"]:disabled ~ .checkbox-label {
   height: 100%;
   flex-direction: column;
   align-items: center;
+  outline: none;
+}
+
+.avatar-upload-wrapper.drag-active .avatar-upload-preview {
+  box-shadow: 0 0 0 2px var(--btn-color);
+}
+
+.avatar-upload-wrapper.drag-active {
+  background: rgba(255, 255, 255, 0.04);
 }
 
 /* ================================================

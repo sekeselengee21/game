@@ -5,6 +5,7 @@ import { GameProvider, useGame } from "../../providers/GameProvider";
 import { useMyTables } from "../../providers/MyTablesProvider";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import MyTablesBottomSheet from "../../components/MyTablesBottomSheet";
+import { useFetchTableBySecureIdQuery } from "../../api/user";
 
 const TexasTableGame = lazy(
   () => import("../../features/poker/texas/texas-table-game"),
@@ -13,18 +14,6 @@ const TexasTableGame = lazy(
 const SWIPE_THRESHOLD = 60;
 const SWIPE_ANGLE_LIMIT = 1.5;
 
-// secureId is base64url(tableId.toString()). Decode to recover numeric id on refresh.
-function decodeTableIdFromSecureId(secureId: string): string {
-  if (!secureId) return "";
-  try {
-    const padded = secureId + "===".slice((secureId.length + 3) % 4);
-    const standard = padded.replace(/-/g, "+").replace(/_/g, "/");
-    return atob(standard);
-  } catch {
-    return "";
-  }
-}
-
 function TablePage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -32,6 +21,16 @@ function TablePage() {
   const { myTables, addTable } = useMyTables();
 
   const urlSecureId = params.id ?? "";
+  const {
+    data: fetchedTable,
+    isFetching: isFetchingTable,
+    isError: isFetchTableError,
+  } = useFetchTableBySecureIdQuery(urlSecureId, {
+    skip:
+      !urlSecureId ||
+      location.state?.table?.secureId === urlSecureId ||
+      myTables.some((t) => t.secureId === urlSecureId),
+  });
 
   const table = useMemo(() => {
     // Prefer fresh table data passed via navigate state.
@@ -40,11 +39,9 @@ function TablePage() {
     // Fall back to a previously joined table so refresh works.
     const fromMyTables = myTables.find((t) => t.secureId === urlSecureId);
     if (fromMyTables) return fromMyTables;
-    // Last resort: minimal stub with the decoded numeric id so the WS can subscribe.
-    const decoded = decodeTableIdFromSecureId(urlSecureId);
-    if (decoded) return { tableId: Number(decoded), secureId: urlSecureId };
+    if (fetchedTable) return fetchedTable;
     return null;
-  }, [location.state, myTables, urlSecureId]);
+  }, [location.state, myTables, fetchedTable, urlSecureId]);
 
   const secureId: string = urlSecureId;
   const tableId: string = table ? String(table.tableId) : "";
@@ -53,6 +50,17 @@ function TablePage() {
   useEffect(() => {
     if (table && table.tableName) addTable(table);
   }, [table?.secureId, table?.tableName]);
+
+  useEffect(() => {
+    if (!urlSecureId) {
+      navigate("/", { replace: true });
+      return;
+    }
+
+    if (!isFetchingTable && !table && isFetchTableError) {
+      navigate("/", { replace: true });
+    }
+  }, [urlSecureId, isFetchingTable, isFetchTableError, table, navigate]);
 
   // Swipe-to-switch gesture
   const touchStart = useRef<{ x: number; y: number } | null>(null);
@@ -90,10 +98,8 @@ function TablePage() {
     navigate(`/table/${target.secureId}`, { state: { table: target } });
   };
 
-  // Guard: redirect only if no table id can be derived at all.
   if (!tableId) {
-    navigate("/", { replace: true });
-    return null;
+    return <LoadingSpinner message="" />;
   }
 
   return (

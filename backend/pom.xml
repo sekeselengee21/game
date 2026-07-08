@@ -14,6 +14,7 @@
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.version>3.22.3</quarkus.platform.version>
         <jooq.version>3.20.3</jooq.version>
+        <jooq.codegen.migration.scripts>src/main/resources/db/migration/*.sql</jooq.codegen.migration.scripts>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.5.2</surefire-plugin.version>
     </properties>
@@ -80,6 +81,14 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-agroal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-flyway</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -240,6 +249,13 @@
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq-codegen-maven</artifactId>
                 <version>${jooq.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-meta-extensions</artifactId>
+                        <version>${jooq.version}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <goals>
@@ -248,17 +264,31 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <jdbc>
-                        <driver>org.postgresql.Driver</driver>
-                        <url>jdbc:postgresql://127.0.0.1:5432/poker</url>
-                        <user>poker</user>
-                        <password>poker321</password>
-                    </jdbc>
                     <generator>
                         <database>
-                            <name>org.jooq.meta.postgres.PostgresDatabase</name>
-                            <inputSchema>public</inputSchema>
+                            <name>org.jooq.meta.extensions.ddl.DDLDatabase</name>
                             <includes>.*</includes>
+                            <properties>
+                                <property>
+                                    <key>scripts</key>
+                                    <value>${jooq.codegen.migration.scripts}</value>
+                                </property>
+                                <property>
+                                    <key>sort</key>
+                                    <value>flyway</value>
+                                </property>
+                                <property>
+                                    <key>defaultNameCase</key>
+                                    <value>lower</value>
+                                </property>
+                            </properties>
+                            <forcedTypes>
+                                <forcedType>
+                                    <name>JSONB</name>
+                                    <includeExpression>(?i:.*\.(details|winning_hole_cards|winning_community_cards))</includeExpression>
+                                    <includeTypes>(?i:JSON)</includeTypes>
+                                </forcedType>
+                            </forcedTypes>
                         </database>
                         <generate>
                             <pojos>true</pojos>
