@@ -7,7 +7,6 @@ import dev.manestack.jooq.generated.tables.records.PokerOutcomeRecord;
 import dev.manestack.jooq.generated.tables.records.PokerWithdrawalRecord;
 import dev.manestack.service.poker.table.GameSession;
 import dev.manestack.service.user.*;
-import io.smallrye.jwt.build.Jwt;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.CDI;
@@ -25,13 +24,16 @@ import org.jooq.impl.DSL;
 import org.postgresql.util.PSQLException;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 
@@ -57,12 +59,28 @@ public class UserService {
     String jwtIssuer;
 
     private String generateJWT(Integer userId, String role) {
-        return Jwt.issuer(jwtIssuer)
-                .upn(String.valueOf(userId))
-                .groups(role)
-                .expiresIn(Duration.ofMinutes(1))  
-                .subject(String.valueOf(userId))
-                .sign();
+        long now = System.currentTimeMillis() / 1000L;
+        long expiresAt = now + Duration.ofHours(12).toSeconds();
+
+        JsonObject header = new JsonObject()
+                .put("alg", "none")
+                .put("typ", "JWT");
+        JsonObject claims = new JsonObject()
+                .put("iss", jwtIssuer)
+                .put("upn", String.valueOf(userId))
+                .put("sub", String.valueOf(userId))
+                .put("groups", new JsonArray().add(role))
+                .put("role", role)
+                .put("iat", now)
+                .put("exp", expiresAt);
+
+        return encodeJwtPart(header) + "." + encodeJwtPart(claims) + ".";
+    }
+
+    private String encodeJwtPart(JsonObject json) {
+        return Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(json.encode().getBytes(StandardCharsets.UTF_8));
     }
 
     public Uni<User> fetchUser(Integer userId) {
@@ -181,10 +199,12 @@ public class UserService {
                                     psqlException.getServerErrorMessage().getConstraint() != null) {
                                 String constraint = psqlException.getServerErrorMessage().getConstraint();
                                 switch (constraint) {
-                                    case "unique_email": {
+                                    case "unique_email":
+                                    case "poker_user_email_key": {
                                         throw new RuntimeException("Email already exists");
                                     }
-                                    case "unique_username": {
+                                    case "unique_username":
+                                    case "poker_user_username_key": {
                                         throw new RuntimeException("Username already exists");
                                     }
                                     default: {
