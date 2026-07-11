@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { GlobalWebSocketContext } from "../../providers/GlobalWebSocketProvider";
-import { PokerCardImage } from "../../assets/card1/index";
+import { PokerCardImage } from "../../assets/card";
 
 interface JackpotModalProps {
   onClose: () => void;

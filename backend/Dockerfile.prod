@@ -2,6 +2,10 @@ FROM maven:3.9.6-eclipse-temurin-21 AS build
 
 WORKDIR /app
 
+# The Maven base image sets MAVEN_CONFIG=/root/.m2, but this project's
+# Maven wrapper passes MAVEN_CONFIG as CLI args and treats it as a phase.
+ENV MAVEN_CONFIG=
+
 COPY pom.xml ./
 COPY .mvn .mvn
 COPY mvnw mvnw
