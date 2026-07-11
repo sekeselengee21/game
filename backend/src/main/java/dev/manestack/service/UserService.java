@@ -169,7 +169,7 @@ public class UserService {
                 .map(unused -> {
                     try {
                         String hashedPassword = BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray());
-                        Integer userId = context.transactionResult(configuration -> {
+                        return context.transactionResult(configuration -> {
                             DSLContext ctx = DSL.using(configuration);
                             Integer newUserId = ctx.insertInto(POKER_USER)
                                     .set(POKER_USER.EMAIL, user.getEmail())
@@ -190,9 +190,8 @@ public class UserService {
                                     .doNothing()
                                     .execute();
 
-                            return newUserId;
+                            return generateJWT(newUserId, User.Role.USER.name());
                         });
-                        return generateJWT(userId, User.Role.USER.name());
                     } catch (IntegrityConstraintViolationException integrityException) {
                         if (integrityException.getCause() instanceof PSQLException psqlException) {
                             if (psqlException.getServerErrorMessage() != null &&
@@ -200,12 +199,14 @@ public class UserService {
                                 String constraint = psqlException.getServerErrorMessage().getConstraint();
                                 switch (constraint) {
                                     case "unique_email":
-                                    case "poker_user_email_key": {
-                                        throw new RuntimeException("Email already exists");
+                                    case "poker_user_email_key":
+                                    case "uk_poker_user_email": {
+                                        throw new IllegalArgumentException("Email already exists");
                                     }
                                     case "unique_username":
-                                    case "poker_user_username_key": {
-                                        throw new RuntimeException("Username already exists");
+                                    case "poker_user_username_key":
+                                    case "uk_poker_user_username": {
+                                        throw new IllegalArgumentException("Username already exists");
                                     }
                                     default: {
                                         throw new RuntimeException("Failed to create user");

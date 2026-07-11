@@ -2,6 +2,7 @@ package dev.manestack.endpoint;
 
 import io.vertx.core.json.JsonObject;
 import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import org.jboss.logging.Logger;
@@ -18,6 +19,11 @@ public class ExceptionMappers {
         String message = throwable.getMessage();
         if (throwable instanceof NotFoundException) {
             status = Response.Status.NOT_FOUND;
+        } else if (throwable instanceof WebApplicationException webApplicationException) {
+            status = Response.Status.fromStatusCode(webApplicationException.getResponse().getStatus());
+            if (status == null) {
+                status = Response.Status.INTERNAL_SERVER_ERROR;
+            }
         } else if (throwable instanceof IllegalArgumentException) {
             status = Response.Status.BAD_REQUEST;
         } else {
