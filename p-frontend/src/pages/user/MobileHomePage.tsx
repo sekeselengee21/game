@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import heroBg from "../../assets/image/homepage-bg5.webp";
-import bonusBg from "../../assets/image/bonus-bg.webp";
+import heroBg from "../../assets/image/header.png";
+import bonusBg from "../../assets/image/icons/cash_animation.webp";
 import gif2 from "../../assets/image/gifs/telegram-join.gif";
 
 interface MobileHomePageProps {
