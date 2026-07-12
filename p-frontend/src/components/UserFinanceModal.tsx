@@ -19,10 +19,9 @@ export default function UserFinanceModal({ userBalance, closeModal }: UserFinanc
   const { data: withdrawalsData } = useFetchWithdrawalsQuery();
   const { data: depositsData } = useFetchDepositsQuery();
 
-  const withdrawals = withdrawalsData || [];
-  const deposits = depositsData || [];
-
   const mergedHistory: TransactionHistoryItem[] = useMemo(() => {
+    const withdrawals = withdrawalsData || [];
+    const deposits = depositsData || [];
     return [
       ...withdrawals.map((w: Withdrawal) => ({
         id: String(w.withdrawalId),
@@ -41,7 +40,7 @@ export default function UserFinanceModal({ userBalance, closeModal }: UserFinanc
     ]
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, 5);
-  }, [withdrawals, deposits]);
+  }, [withdrawalsData, depositsData]);
 
   return (
     <div className="ufm-bottom-sheet" onClick={(e) => e.stopPropagation()}>

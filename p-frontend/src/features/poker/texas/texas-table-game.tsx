@@ -200,24 +200,26 @@ export default function TexasTableGame() {
         dispatch({ type: "SET_ALL_IN_PLAYERS", payload: {} });
       }
     }
-  }, [gameState.state]); // Removed state.allInPlayers to prevent infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- this effect dispatches SET_ALL_IN_PLAYERS; depending on state.allInPlayers would loop
+  }, [gameState.state]);
 
   useEffect(() => {
     // Set initial recharge amount only once
     if (gameState.minBuyIn && state.rechargeAmount === 0) {
       dispatch({ type: "SET_RECHARGE_AMOUNT", payload: gameState.minBuyIn });
     }
-  }, [gameState.minBuyIn]); // Removed state.rechargeAmount to prevent infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- sets the recharge amount once; depending on state.rechargeAmount would loop
+  }, [gameState.minBuyIn]);
 
   const gameStateRef = useRef(gameState);
   gameStateRef.current = gameState;
 
   const userId = userInfo?.userId;
-  const seats = gameState.seats || [];
+  const seats = useMemo(() => gameState.seats || [], [gameState.seats]);
   const currentGameState = gameState.state;
   const maxPlayers = gameState.maxPlayers;
   const currentPotValue = gameState.currentPot;
-  const currentBets = gameState.currentBets || {};
+  const currentBets = useMemo(() => gameState.currentBets || {}, [gameState.currentBets]);
   const bigBlind = gameState.bigBlind;
   const currentPlayerSeat = gameState.currentPlayerSeat;
   const turnPlayer = gameState.turnPlayer;
@@ -278,6 +280,7 @@ export default function TexasTableGame() {
         rechargeTimerRef.current = null;
       }, 4000);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- edge-triggered on the FINISHED transition via prevGameStateRef; intentionally not re-run on playerSeat.stack / state.modalType
   }, [currentGameState]);
 
   // Clear timer on unmount only
@@ -469,6 +472,7 @@ export default function TexasTableGame() {
     if (!payoutFingerprint) {
       prevPayoutFingerprintRef.current = "";
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- edge-triggered on payoutFingerprint (derived from combinedSplitPot); hands are read fresh at trigger time
   }, [payoutFingerprint]);
   // After the chips fly to the winner, keep the middle pot hidden until
   // new chips actually enter the pot for the next hand.

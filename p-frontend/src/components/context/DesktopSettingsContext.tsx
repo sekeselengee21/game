@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- provider co-locates its Context and useDesktopSettings hook; the only-export-components rule affects dev-time Fast Refresh only, not the build. */
 import React, { createContext, useContext, useState } from "react";
 
 export type DesktopSettingsState = Record<string, boolean>;

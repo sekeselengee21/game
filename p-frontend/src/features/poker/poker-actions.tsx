@@ -114,7 +114,7 @@ function PokerActions({
     };
 
     return Object.values(conditions).every(Boolean);
-  }, [GamePlayer, isPlayerTurn, isShowdown, isAuto, GamePlayer?.hasActedShowdown, GamePlayer?.isDisconnected]);
+  }, [GamePlayer, isPlayerTurn, isShowdown, isAuto]);
 
   const safeSendAction = useCallback(
     (action: string, amount?: number) => {

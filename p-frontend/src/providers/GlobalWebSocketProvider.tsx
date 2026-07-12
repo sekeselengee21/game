@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- provider co-locates its GlobalWebSocketContext; the only-export-components rule affects dev-time Fast Refresh only, not the build. */
 import { logger } from "../utils/logger";
 import { createContext, useEffect, useRef, useCallback, useState } from "react";
 import { useSelector } from "react-redux";

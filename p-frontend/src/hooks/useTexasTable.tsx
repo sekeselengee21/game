@@ -80,6 +80,7 @@ export function useTexasTable(initialTableId = "") {
     if (newId) {
       sendMessage("TABLE", { tableId: newId, action: "SUBSCRIBE" });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- resubscribe only when the tableId prop changes; sendMessage is a stable useCallback
   }, [initialTableId]);
 
   const isConnecting = useRef(false);
@@ -125,6 +126,21 @@ export function useTexasTable(initialTableId = "") {
     }
   }, [preloadTable]);
 
+  const sendMessage = useCallback((type: string, data: unknown) => {
+    if (ws.current?.readyState === WebSocket.OPEN) {
+      try {
+        ws.current.send(JSON.stringify({ type, data }));
+        logger.log(`[WS] Sent message: ${type}`, data);
+      } catch (error) {
+        logger.error("[WS] Failed to send message:", error);
+        messageQueue.current.push({ type, data });
+      }
+    } else {
+      logger.log(`[WS] Queueing message: ${type} (socket not ready)`);
+      messageQueue.current.push({ type, data });
+    }
+  }, []);
+
   const pushChat = useCallback(
     (data: { username?: string; content?: string; action?: string }) => {
       const newMessage: Chat = {
@@ -147,23 +163,8 @@ export function useTexasTable(initialTableId = "") {
           action: "SUBSCRIBE",
         });
     },
-    [],
+    [sendMessage],
   );
-
-  const sendMessage = useCallback((type: string, data: unknown) => {
-    if (ws.current?.readyState === WebSocket.OPEN) {
-      try {
-        ws.current.send(JSON.stringify({ type, data }));
-        logger.log(`[WS] Sent message: ${type}`, data);
-      } catch (error) {
-        logger.error("[WS] Failed to send message:", error);
-        messageQueue.current.push({ type, data });
-      }
-    } else {
-      logger.log(`[WS] Queueing message: ${type} (socket not ready)`);
-      messageQueue.current.push({ type, data });
-    }
-  }, []);
 
   const authenticateSocket = useCallback(() => {
     if (authenticateTimeout.current) {

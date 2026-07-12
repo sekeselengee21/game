@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- provider co-locates its Context and useGame hook; the only-export-components rule affects dev-time Fast Refresh only, not the build. */
 import { createContext, useContext } from "react";
 import { useTexasTable } from "../hooks/useTexasTable";
 

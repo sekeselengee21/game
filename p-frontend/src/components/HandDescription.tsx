@@ -12,7 +12,7 @@ interface HandDescriptionProps {
   isMe?: boolean;
 }
 
-const HandDescription: React.FC<HandDescriptionProps> = ({ player, seatIndex, communityCards, gameState, isMe }) => {
+const HandDescription: React.FC<HandDescriptionProps> = ({ player, communityCards, gameState, isMe }) => {
   const bestHand = useMemo(() => {
     if (!player?.holeCards?.length) return null;
 
@@ -21,7 +21,7 @@ const HandDescription: React.FC<HandDescriptionProps> = ({ player, seatIndex, co
     if (!shouldShow) return null;
 
     return evaluateBestHand(player.holeCards, communityCards);
-  }, [player, communityCards, gameState.state, gameState.combinedSplitPot, seatIndex, isMe]);
+  }, [player, communityCards, gameState.isAuto, isMe]);
 
   if (!bestHand) return null;
 

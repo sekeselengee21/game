@@ -49,7 +49,7 @@ function TablePage() {
   // Persist the full table object once it's known so future tabs/refreshes can resolve it.
   useEffect(() => {
     if (table && table.tableName) addTable(table);
-  }, [table?.secureId, table?.tableName]);
+  }, [table, addTable]);
 
   useEffect(() => {
     if (!urlSecureId) {

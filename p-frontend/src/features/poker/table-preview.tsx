@@ -15,7 +15,7 @@ const TablePreview: React.FC<TablePreviewProps> = memo(({ table, onClose, isAuth
   const [activeTab, setActiveTab] = React.useState<"table" | "players">("table");
 
   const seatsArray = useMemo(() => {
-    if (!table) return [];
+    if (!table?.maxPlayers) return [];
     return Array.from({ length: table.maxPlayers }).map((_, i) => table.seats?.[i] || null);
   }, [table?.seats, table?.maxPlayers]);
 

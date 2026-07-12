@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- app entrypoint bootstraps RootWrapper/App inline; the only-export-components rule affects dev-time Fast Refresh only, not the build. */
 import { StrictMode, useEffect, useState, useContext, Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";

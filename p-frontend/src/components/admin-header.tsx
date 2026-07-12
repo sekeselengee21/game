@@ -20,14 +20,14 @@ function AdminHeader({ collapsed, onToggleCollapse }: Props) {
 
   useEffect(() => {
     refetch();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, refetch]);
 
   useEffect(() => {
     if (userInfo) {
       dispatch(setAuthenticated(true));
       dispatch(setUserInfo(userInfo));
     }
-  }, [userInfo]);
+  }, [userInfo, dispatch]);
 
   return (
     <div className="admin-header">

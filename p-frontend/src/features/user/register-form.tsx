@@ -38,6 +38,7 @@ function RegisterForm({ setModalType }: { setModalType: (type: string) => void }
       setModalType("");
       navigate("/");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fire once when registration succeeds (data becomes set); dispatch/navigate/setModalType are effectively stable
   }, [data]);
 
   useEffect(() => {

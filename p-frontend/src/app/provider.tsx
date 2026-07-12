@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- this composition root exports TableDataContext alongside AppProvider; the only-export-components rule affects dev-time Fast Refresh only, not the build. */
 import { Provider } from "react-redux";
 import { store } from "./store";
 import { createContext, useState } from "react";

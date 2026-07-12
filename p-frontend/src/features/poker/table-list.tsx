@@ -96,6 +96,7 @@ const TableList = memo(function TableList({
       });
   }, [tableData, selectedCategory, search, country, tableStatus]);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const handleTableClick = useCallback(
     (record: GameTable) => {
       if (!isAuthenticated) {
@@ -108,7 +109,7 @@ const TableList = memo(function TableList({
       }
       onTableClick?.(record);
     },
-    [isAuthenticated, showLoginModal, onTableClick],
+    [isAuthenticated, showLoginModal, onTableClick, isMobile, navigate],
   );
 
   useEffect(() => {
@@ -116,7 +117,6 @@ const TableList = memo(function TableList({
       onTablesLoaded?.(tableData);
     }
   }, [tableData, onTablesLoaded]);
-  const isMobile = useIsMobile();
 
   return (
     <div className="table-list-container">

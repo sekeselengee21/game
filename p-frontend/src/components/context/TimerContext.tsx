@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- provider co-locates its Context and useTimer hook; the only-export-components rule affects dev-time Fast Refresh only, not the build. */
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 
 const TimerContext = createContext<number>(Date.now());

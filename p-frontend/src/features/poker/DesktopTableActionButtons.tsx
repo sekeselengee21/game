@@ -92,7 +92,7 @@ export default function DesktopTableActionButtons({
       return;
     }
     setTableCards(currentSecureId, JSON.parse(myHoleCardsJson));
-  }, [currentSecureId, gameStateMatchesUrl, myHoleCardsJson, isHandOver]);
+  }, [currentSecureId, gameStateMatchesUrl, myHoleCardsJson, isHandOver, setTableCards]);
   // const mySeat = gameState.seats?.find((s) => s?.user?.userId === me?.userId);
   // const myStack = mySeat?.stack ?? 0;
   const isAdmin = me?.role === "ADMIN";
