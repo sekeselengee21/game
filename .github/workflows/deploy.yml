@@ -1,0 +1,42 @@
+name: Deploy to GCP
+
+# Redeploys the production stack on the GCP VM every push to main.
+# Requires three repository secrets (Settings > Secrets and variables > Actions):
+#   GCP_HOST     - VM public IP or hostname (e.g. 34.150.99.162)
+#   GCP_USER     - SSH username on the VM (e.g. davidcheng380)
+#   GCP_SSH_KEY  - a private SSH key whose public key is in the VM's
+#                  ~/.ssh/authorized_keys (use a dedicated deploy key)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Never let two deploys run at once; let an in-flight deploy finish.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Redeploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.GCP_HOST }}
+          username: ${{ secrets.GCP_USER }}
+          key: ${{ secrets.GCP_SSH_KEY }}
+          command_timeout: 20m
+          script: |
+            set -euo pipefail
+            cd ~/game
+            # Make the working tree an exact mirror of origin/main. .env is
+            # gitignored, so local production config is preserved.
+            git fetch --all --prune
+            git reset --hard origin/main
+            # Rebuild any service whose build context changed, then restart.
+            docker compose -f docker-compose.prod.yml up -d --build
+            # Reclaim disk from dangling images left by rebuilds.
+            docker image prune -f
+            docker compose -f docker-compose.prod.yml ps
