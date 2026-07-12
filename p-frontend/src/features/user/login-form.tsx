@@ -41,8 +41,8 @@ function LoginForm({ setModalType }: { setModalType: (type: string) => void }) {
     if (isError) {
       let errMsg = "Нэвтрэхэд алдаа гарлаа. Дахин оролдоно уу!";
 
-      if (error && "data" in error && (error as any).data?.errorMessage) {
-        const serverMsg = (error as any).data.errorMessage;
+      if (error && "data" in error && (error as { data?: { errorMessage: string } }).data?.errorMessage) {
+        const serverMsg = (error as { data?: { errorMessage: string } }).data!.errorMessage;
         const errorMap: Record<string, string> = {
           INVALID_CREDENTIALS: "Хэрэглэгчийн нэр эсвэл нууц үг буруу байна!",
           USER_NOT_FOUND: "Хэрэглэгч олдсонгүй!",
@@ -55,7 +55,8 @@ function LoginForm({ setModalType }: { setModalType: (type: string) => void }) {
   }, [isError, error]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let { name, value } = e.target;
+    const { name } = e.target;
+    let { value } = e.target;
     if (name === "username") value = value.trim().toLowerCase();
     setFormData({ ...formData, [name]: value });
   };

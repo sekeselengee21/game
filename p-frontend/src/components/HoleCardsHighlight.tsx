@@ -14,15 +14,15 @@ interface HoleCardsHighlightProps {
 export default function HoleCardsHighlight({ player, combinedSplitPot, isFolding }: HoleCardsHighlightProps) {
   const { settings } = useDesktopSettings();
   const highlightEnabled = settings["highlightBestHand"] ?? false;
+  const isMobile = useIsMobile();
 
   if (!player || !player.holeCards || player.holeCards.length === 0) {
     return null;
   }
-  const winnersData = Object.values(combinedSplitPot?.hands ?? {}).filter((p: any) => p.isWinner);
-  const winner = winnersData.find((p: any) => p.user?.username === player.user?.username);
+  const winnersData = Object.values(combinedSplitPot?.hands ?? {}).filter((p: Partial<GamePlayer>) => p.isWinner);
+  const winner = winnersData.find((p: Partial<GamePlayer>) => p.user?.username === player.user?.username);
   const isWinner = !!winner;
   const winningCards: GameCard[] = winner?.bestHandCards ?? [];
-  const isMobile = useIsMobile();
 
   const isCardConnected = (card: GameCard): boolean =>
     highlightEnabled && winningCards.some((wc) => wc.rank === card.rank && wc.suit === card.suit);

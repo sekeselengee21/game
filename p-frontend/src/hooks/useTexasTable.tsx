@@ -46,7 +46,7 @@ export function useTexasTable(initialTableId = "") {
   const ws = useRef<WebSocket | null>(null);
   const messageBuffer = useRef<WebsocketEvent[]>([]);
   const flushTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const messageQueue = useRef<{ type: string; data: any }[]>([]);
+  const messageQueue = useRef<{ type: string; data: unknown }[]>([]);
   const [socketReady, setSocketReady] = useState(false);
   const [tableId, setTableId] = useState(initialTableId);
   const [destinedCommunityCards, setDestinedCommunityCards] = useState<
@@ -126,7 +126,7 @@ export function useTexasTable(initialTableId = "") {
   }, [preloadTable]);
 
   const pushChat = useCallback(
-    (data: any) => {
+    (data: { username?: string; content?: string; action?: string }) => {
       const newMessage: Chat = {
         id: Math.random(),
         username: data?.username || "Unknown",
@@ -150,7 +150,7 @@ export function useTexasTable(initialTableId = "") {
     [],
   );
 
-  const sendMessage = useCallback((type: string, data: any) => {
+  const sendMessage = useCallback((type: string, data: unknown) => {
     if (ws.current?.readyState === WebSocket.OPEN) {
       try {
         ws.current.send(JSON.stringify({ type, data }));
@@ -315,12 +315,13 @@ export function useTexasTable(initialTableId = "") {
             break;
           }
 
-          case "ERROR":
+          case "ERROR": {
             const token = localStorage.getItem("accessToken");
             if (token) {
               logger.error("[WS] Server error:", msg.data?.error);
             }
             break;
+          }
         }
       } catch (error) {
         logger.error("[WS] Error handling message:", error, msg);

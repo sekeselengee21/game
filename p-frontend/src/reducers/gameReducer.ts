@@ -107,7 +107,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             if (seat.user) acc[seat.seatId] = seat.holeCards || [];
             return acc;
           },
-          {} as Record<number, any[]>,
+          {} as Record<string, GameCard[]>,
         ),
         currentBets: state.currentBets || {},
         currentPot: state.currentPot || 0,

@@ -53,7 +53,7 @@ interface GameTable {
 interface GameSessionSnapshot {
   sessionId: string;
   tableId: number;
-  details: any;
+  details: { players?: unknown[]; winners?: unknown[]; rake?: number };
 }
 
 const rawBaseQuery = fetchBaseQuery({

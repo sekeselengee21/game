@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import type { RootState } from "../../app/store";
 import { useEffect, useState } from "react";
 import heroBg from "../../assets/image/header.png";
 import bonusBg from "../../assets/image/icons/cash_animation.webp";
@@ -10,8 +11,8 @@ interface MobileHomePageProps {
 }
 
 const MobileHomePage = ({ handleNavigateToTables, handleNavigateToCashier }: MobileHomePageProps) => {
-  const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
-  const userBalance = useSelector((state: any) => state.auth.userBalance);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const userBalance = useSelector((state: RootState) => state.auth.userBalance);
   const [gifSrc, setGifSrc] = useState(gif2);
 
   useEffect(() => {

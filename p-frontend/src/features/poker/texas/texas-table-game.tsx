@@ -19,7 +19,7 @@ import formatAmount from "../../../utils/formatNumber.ts";
 import TexasTablePlayerSeats from "./texas-table-player-seats";
 import PotChips from "../PotChips.tsx";
 import TexasTableRechargeForm from "./texas-table-recharge-form";
-import type { HandHistory } from "../../../api/game.ts";
+import type { HandHistory, GamePlayer } from "../../../api/game.ts";
 import { useLocation } from "react-router";
 import CardDealingAnimation from "../../../components/CardDealingAnimation.tsx";
 import PotPayoutAnimation, {
@@ -179,8 +179,8 @@ export default function TexasTableGame() {
     if (!hands) return [];
 
     return Object.values(hands)
-      .filter((hand: any) => hand.isWinner)
-      .map((hand: any) => ({
+      .filter((hand: Partial<GamePlayer>) => hand.isWinner)
+      .map((hand: Partial<GamePlayer>) => ({
         username: hand.user?.username ?? "Unknown",
         amount: hand.winnings ?? hand.netResult ?? 0,
         cards: hand.holeCards ?? [],
@@ -439,9 +439,9 @@ export default function TexasTableGame() {
     if (!hands) return "";
     return Object.entries(hands)
       .filter(
-        ([, h]: [string, any]) => h?.isWinner && (h?.winnings ?? 0) > 0,
+        ([, h]: [string, Partial<GamePlayer>]) => h?.isWinner && (h?.winnings ?? 0) > 0,
       )
-      .map(([s, h]: [string, any]) => `${s}:${h.winnings}`)
+      .map(([s, h]: [string, Partial<GamePlayer>]) => `${s}:${h.winnings}`)
       .sort()
       .join(",");
   }, [gameState.combinedSplitPot]);
@@ -455,12 +455,12 @@ export default function TexasTableGame() {
       const hands = gameState.combinedSplitPot?.hands ?? {};
       const ws: PayoutWinner[] = Object.entries(hands)
         .filter(
-          ([, h]: [string, any]) =>
+          ([, h]: [string, Partial<GamePlayer>]) =>
             h?.isWinner && (h?.winnings ?? 0) > 0,
         )
-        .map(([s, h]: [string, any]) => ({
+        .map(([s, h]: [string, Partial<GamePlayer>]) => ({
           seatIndex: parseInt(s, 10),
-          amount: h.winnings,
+          amount: h.winnings ?? 0,
         }));
       setPayoutWinners(ws);
       setPayoutKey((k) => k + 1);

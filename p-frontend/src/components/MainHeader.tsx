@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, Suspense, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useMeQuery, useUpdateAvatarMutation } from "../api/user";
+import type { RootState } from "../app/store";
 import {
   setAuthenticated,
   setUserInfo,
@@ -90,10 +91,10 @@ const MainHeader: React.FC<MainHeaderProps> = ({
   const token = localStorage.getItem("accessToken");
   const { data: userInfo, refetch } = useMeQuery(undefined, { skip: !token });
   const [updateAvatar] = useUpdateAvatarMutation();
-  const userBalance = useSelector((state: any) => state.auth.userBalance);
+  const userBalance = useSelector((state: RootState) => state.auth.userBalance);
   const currentAvatar = userInfo && userInfo.avatar ? userInfo.avatar : Avatar;
   const isAuthenticated = useSelector(
-    (state: any) => state.auth.isAuthenticated,
+    (state: RootState) => state.auth.isAuthenticated,
   );
   const isMobile = useIsMobile();
   const username = useMemo(() => {

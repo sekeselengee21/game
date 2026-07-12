@@ -39,7 +39,7 @@ function AdminTable() {
 
   useEffect(() => {
     if (isCreateError) {
-      const msg = "data" in createError && (createError as any).data?.errorMessage;
+      const msg = ("data" in createError && (createError as { data?: { errorMessage?: string } }).data?.errorMessage) as string;
       setMessage(msg);
       setIsSubmitting(false);
     } else if (isCreateSuccess) {
@@ -53,8 +53,8 @@ function AdminTable() {
   useEffect(() => {
     if (isUpdateError) {
       const msg =
-        "data" in updateError && (updateError as any).data?.errorMessage
-          ? "Засахад алдаа гарлаа: " + (updateError as any).data.errorMessage
+        "data" in updateError && (updateError as { data?: { errorMessage?: string } }).data?.errorMessage
+          ? "Засахад алдаа гарлаа: " + (updateError as { data: { errorMessage?: string } }).data.errorMessage
           : "Засахад алдаа гарлаа";
       setMessage(msg);
       setIsSubmitting(false);
@@ -69,8 +69,8 @@ function AdminTable() {
   useEffect(() => {
     if (isDeleteError) {
       const msg =
-        "data" in deleteError && (deleteError as any).data?.errorMessage
-          ? "Устгахад алдаа гарлаа: " + (deleteError as any).data.errorMessage
+        "data" in deleteError && (deleteError as { data?: { errorMessage?: string } }).data?.errorMessage
+          ? "Устгахад алдаа гарлаа: " + (deleteError as { data: { errorMessage?: string } }).data.errorMessage
           : "Устгахад алдаа гарлаа";
       setMessage(msg);
     } else if (isDeleteSuccess) {

@@ -16,7 +16,7 @@ function WithdrawTable({ balance = 0 }: { balance?: number }) {
       setAmount(0);
     }
     if (isError) {
-      alert((error as any)?.data?.message || "An unknown error occurred during withdrawal.");
+      alert((error as { data?: { message?: string } })?.data?.message || "An unknown error occurred during withdrawal.");
     }
   }, [isSuccess, isError, error]);
 

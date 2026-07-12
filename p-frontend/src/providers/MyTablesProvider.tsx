@@ -22,7 +22,9 @@ function loadFromStorage(): GameTable[] {
 function saveToStorage(tables: GameTable[]) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tables));
-  } catch {}
+  } catch {
+    /* intentionally empty */
+  }
 }
 
 interface MyTablesCtx {

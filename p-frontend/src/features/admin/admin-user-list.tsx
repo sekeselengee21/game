@@ -7,8 +7,8 @@ import { toast } from "react-toastify";
 type AdminUserListProps = {
   users: User[];
   deleteUser: (userId: number) => void;
-  updateUserRole: (args: { userId: number; role: "USER" | "ADMIN" }) => any;
-  updateUserBalance: (args: { userId: number; balance: number }) => any;
+  updateUserRole: (args: { userId: number; role: "USER" | "ADMIN" }) => { unwrap: () => Promise<void> };
+  updateUserBalance: (args: { userId: number; balance: number }) => { unwrap: () => Promise<void> };
 };
 
 function AdminUserList({ users, deleteUser, updateUserRole, updateUserBalance }: AdminUserListProps) {

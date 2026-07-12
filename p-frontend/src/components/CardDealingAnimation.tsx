@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import type { GameCard } from "../api/game";
+import type { User } from "../api/user";
 import PokerCard from "../features/poker/poker-card";
 import FlipCardAudio from "../assets/sounds/card-flip.wav";
 import { Howl } from "howler";
 
 interface SeatState {
-  user: any | null;
+  user: User | null;
   isDisconnected?: boolean;
   stack?: number;
   seatIndex: number;

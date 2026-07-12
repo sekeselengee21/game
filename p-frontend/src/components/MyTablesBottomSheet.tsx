@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { useMyTables } from "../providers/MyTablesProvider";
+import type { GameTable } from "../api/admin";
 
 interface Props {
   currentSecureId?: string;
@@ -29,7 +30,7 @@ export default function MyTablesBottomSheet({ currentSecureId }: Props) {
 
   if (!rendered) return null;
 
-  const goToTable = (secureId: string, table: any) => {
+  const goToTable = (secureId: string, table: GameTable) => {
     if (secureId === currentSecureId) {
       closeSheet();
       return;

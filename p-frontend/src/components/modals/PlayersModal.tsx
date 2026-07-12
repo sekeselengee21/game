@@ -1,19 +1,20 @@
 import React from "react";
+import type { GamePlayer } from "../../api/game";
 import CustomModal from "../../components/modals/CustomModal";
 
 interface PlayersModalProps {
-  seats: any[];
+  seats: GamePlayer[];
   isAdmin: boolean;
   onKick: (uid: number) => void;
   onClose: () => void;
 }
 
-const PlayerItem = ({ seat, isAdmin, onKick }: { seat: any; isAdmin: boolean; onKick: (uid: number) => void }) => (
+const PlayerItem = ({ seat, isAdmin, onKick }: { seat: GamePlayer; isAdmin: boolean; onKick: (uid: number) => void }) => (
   <div className="playersmodal-row">
-    <span className="playersmodal-name">{seat.user.username}</span>
+    <span className="playersmodal-name">{seat.user!.username}</span>
     <span className="playersmodal-balance">{seat.stack?.toLocaleString() ?? 0}</span>
     {isAdmin && (
-      <button className="playersmodal-kickbtn" onClick={() => onKick(seat.user.userId)}>
+      <button className="playersmodal-kickbtn" onClick={() => onKick(seat.user!.userId)}>
         Босгох
       </button>
     )}
@@ -36,7 +37,7 @@ const PlayersModal: React.FC<PlayersModalProps> = ({ seats, isAdmin, onKick, onC
 
             <div className="playersmodal-rows">
               {seats.map((s) => {
-                return <PlayerItem key={s.user.userId} seat={s} isAdmin={isAdmin} onKick={onKick} />;
+                return <PlayerItem key={s.user!.userId} seat={s} isAdmin={isAdmin} onKick={onKick} />;
               })}
             </div>
           </div>

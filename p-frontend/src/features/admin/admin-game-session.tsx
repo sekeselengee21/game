@@ -1,10 +1,20 @@
 import { logger } from "../../utils/logger";
 import { useFetchGameSessionsQuery } from "../../api/admin";
 
+interface GameSessionRow {
+  sessionId: string;
+  createDate?: string;
+  details?: {
+    players?: unknown[];
+    winners?: unknown[];
+    rake?: number;
+  };
+}
+
 function AdminGameSession() {
   const { data } = useFetchGameSessionsQuery({ tableId: 4 });
 
-  const handleViewPlayers = (players: any[]) => {
+  const handleViewPlayers = (players: unknown[]) => {
     logger.log("View players", players);
   };
 
@@ -22,12 +32,12 @@ function AdminGameSession() {
           </tr>
         </thead>
         <tbody>
-          {data?.map((item: any, index: number) => (
+          {data?.map((item: GameSessionRow, index: number) => (
             <tr key={item.sessionId}>
               <td>{index + 1}</td>
               <td>{item.sessionId}</td>
               <td>
-                {new Date(item.createDate).toLocaleString("mn-MN", {
+                {new Date(item.createDate!).toLocaleString("mn-MN", {
                   year: "numeric",
                   month: "2-digit",
                   day: "2-digit",

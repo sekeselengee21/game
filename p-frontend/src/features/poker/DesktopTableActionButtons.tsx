@@ -10,6 +10,7 @@ import { useMyTables } from "../../providers/MyTablesProvider";
 import { useKickPlayerMutation } from "../../api/admin";
 import { useMeQuery } from "../../api/user";
 import type { GameState } from "../../types/gameTypes";
+import type { RootState } from "../../app/store";
 import { PokerCardImage } from "../../assets/card";
 import type { GameCard } from "../../api/game";
 
@@ -31,7 +32,7 @@ type ModalType = "PLAYERS" | "CONFIRM_LEAVE" | "SETTINGS" | "INFO" | "HISTORY" |
 
 interface ModalState {
   type: ModalType;
-  props?: Record<string, any>;
+  props?: Record<string, unknown>;
 }
 
 interface DesktopTableActionButtonsProps {
@@ -65,7 +66,7 @@ export default function DesktopTableActionButtons({
   const [kickPlayer] = useKickPlayerMutation();
   const token = localStorage.getItem("accessToken");
   const { data: me } = useMeQuery(undefined, { skip: !token });
-  const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   const { myTables, removeTable, tableCards, setTableCards, openSheet } = useMyTables();
   // Use the URL secureId directly so the active tab updates immediately on switch,
@@ -128,7 +129,7 @@ export default function DesktopTableActionButtons({
 
   const loadMoreHands = () => setOffset((prev) => prev + limit);
 
-  const openModal = (type: ModalType, props?: Record<string, any>) => setModalState({ type, props });
+  const openModal = (type: ModalType, props?: Record<string, unknown>) => setModalState({ type, props });
   const closeModal = () => setModalState({ type: null });
 
   const leaveSeatModal = () => {

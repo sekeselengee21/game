@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
-import { useRegisterMutation } from "../../api/user";
+import { useRegisterMutation, type User } from "../../api/user";
 import { setAuthenticated } from "../../providers/auth-slice";
 import banks from "../../assets/data/banks";
 
@@ -43,7 +43,7 @@ function RegisterForm({ setModalType }: { setModalType: (type: string) => void }
   useEffect(() => {
     if (isError) {
       const msg =
-        error && "data" in error && (error as any).data?.errorMessage ? (error as any).data.errorMessage : "Бүртгэл амжилтгүй. Дахин оролдоно уу.";
+        error && "data" in error && (error as { data?: { errorMessage: string } }).data?.errorMessage ? (error as { data?: { errorMessage: string } }).data!.errorMessage : "Бүртгэл амжилтгүй. Дахин оролдоно уу.";
 
       setErrorMessage(msg);
 
@@ -81,7 +81,7 @@ function RegisterForm({ setModalType }: { setModalType: (type: string) => void }
       email: formData.email.trim().toLowerCase(),
     };
 
-    register(normalizedData as any);
+    register(normalizedData as unknown as User);
   };
 
   return (

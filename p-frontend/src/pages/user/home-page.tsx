@@ -4,6 +4,8 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import { useMyTables } from "../../providers/MyTablesProvider";
 import { FaLayerGroup } from "react-icons/fa";
 import { useFetchTablesQuery } from "../../api/user";
+import type { RootState } from "../../app/store";
+import type { GameTable } from "../../api/admin";
 import gif2 from "../../assets/image/gifs/telegram-join.gif";
 import tablesIcon from "../../assets/image/icons/cash-game-tab-icon-blue.svg";
 import tournamentIcon from "../../assets/image/icons/tournaments-game-tab-icon-blue.svg";
@@ -49,7 +51,7 @@ const HomePage = memo(function HomePage() {
     }
   }, [chatMessages.length, category]);
 
-  const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const isMobile = useIsMobile();
   const { data: tableData } = useFetchTablesQuery(undefined, {
     refetchOnMountOrArgChange: true,
@@ -66,7 +68,7 @@ const HomePage = memo(function HomePage() {
     }
   }, [isMobile, hasSetDefaultTable, tableData]);
 
-  const handleTableClick = useCallback((table: any) => {
+  const handleTableClick = useCallback((table: GameTable) => {
     setSelectedTableSecureId(table.secureId);
   }, []);
 
@@ -139,7 +141,7 @@ const HomePage = memo(function HomePage() {
                   },
                   { key: "Sit & Go", label: "Sit & Go", icon: sitgoIcon },
                 ].map((c) => (
-                  <button key={c.key} className={`category-btn ${category === c.key ? "active" : ""}`} onClick={() => setCategory(c.key as any)}>
+                  <button key={c.key} className={`category-btn ${category === c.key ? "active" : ""}`} onClick={() => setCategory(c.key as TableCategory)}>
                     <img src={c.icon} alt="" className="category-icon" />
                     <span>{c.label}</span>
                   </button>

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setAuthenticated } from "../providers/auth-slice";
-import type { GameTable } from "./admin";
+import type { GameTable, Deposit, Withdrawal } from "./admin";
 const baseURL = import.meta.env.VITE_BACKEND_URL;
 
 interface DataBlock {
@@ -141,14 +141,14 @@ export const userApi = createApi({
       providesTags: ["tables"],
     }),
 
-    fetchDeposits: builder.query<any, void>({
+    fetchDeposits: builder.query<Deposit[], void>({
       query: () => ({
         url: "/deposit",
         method: "GET",
       }),
       providesTags: ["DepositList"],
     }),
-    fetchWithdrawals: builder.query<any, void>({
+    fetchWithdrawals: builder.query<Withdrawal[], void>({
       query: () => ({
         url: "/withdrawal",
         method: "GET",
@@ -156,7 +156,7 @@ export const userApi = createApi({
       providesTags: ["WithdrawList"],
     }),
     createWithdrawal: builder.mutation({
-      query: (withdrawalData: { amount: number; details: any }) => ({
+      query: (withdrawalData: { amount: number; details: Record<string, unknown> }) => ({
         url: "/withdrawal",
         method: "POST",
         body: withdrawalData,

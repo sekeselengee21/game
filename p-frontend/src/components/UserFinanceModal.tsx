@@ -2,6 +2,7 @@ import { Suspense, useState, useMemo } from "react";
 import UserWithdrawPage from "../features/user/user-withdraw-page";
 import UserDepositPage from "../features/user/user-deposit-page";
 import { useFetchWithdrawalsQuery, useFetchDepositsQuery } from "../api/user";
+import type { Withdrawal, Deposit } from "../api/admin";
 import TransactionHistoryTable, { type TransactionHistoryItem } from "../features/user/TransactionHistoryTable";
 import { useIsMobile } from "../hooks/useIsMobile";
 
@@ -23,16 +24,16 @@ export default function UserFinanceModal({ userBalance, closeModal }: UserFinanc
 
   const mergedHistory: TransactionHistoryItem[] = useMemo(() => {
     return [
-      ...withdrawals.map((w: any) => ({
-        id: w.withdrawalId,
-        type: "Таталт",
+      ...withdrawals.map((w: Withdrawal) => ({
+        id: String(w.withdrawalId),
+        type: "Таталт" as const,
         amount: w.amount,
         date: w.createDate,
         status: w.approvedBy ? "Complete" : "Pending",
       })),
-      ...deposits.map((d: any) => ({
-        id: d.depositId,
-        type: "Цэнэглэлт",
+      ...deposits.map((d: Deposit) => ({
+        id: String(d.depositId),
+        type: "Цэнэглэлт" as const,
         amount: d.amount,
         date: d.createDate,
         status: "Complete",

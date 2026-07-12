@@ -12,7 +12,7 @@ export function sanitizeHTML(input: string): string {
 }
 
 export function sanitizeUsername(username: string): string {
-  return username.replace(/[^\w\-]/g, '').slice(0, 20);
+  return username.replace(/[^\w-]/g, '').slice(0, 20);
 }
 
 export function sanitizeChatMessage(message: string): string {

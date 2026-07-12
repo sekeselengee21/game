@@ -7,6 +7,9 @@ const websocketURL = baseURL.replace(/^https?:\/\/(.*)\/api$/, "wss://$1").repla
 type WebsocketEvent = {
   id: string;
   type: string;
+  // Raw deserialized websocket payload; its shape varies per event type and is
+  // narrowed by each consumer. Intentionally untyped at this transport boundary.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
 };
 

@@ -1,5 +1,5 @@
 import type { GameState } from "../../../types/gameTypes";
-import type { GameCard } from "../../../api/game";
+import type { GameCard, GamePlayer } from "../../../api/game";
 import PokerCard from "../poker-card";
 import { useMemo } from "react";
 import { evaluateBestHand } from "../../../utils/pokerSolver";
@@ -22,7 +22,7 @@ function TexasTableCommunityCards({ gameState }: TexasTableCommunityCardsProps) 
       sidePot.winningCommunityCards?.forEach((card: GameCard) => {
         communityCardsSet.add(`${card.suit}-${card.rank}`);
       });
-      sidePot.winners?.forEach((winner: any) => {
+      sidePot.winners?.forEach((winner: GamePlayer) => {
         winner.bestHandCards?.forEach((card: GameCard) => {
           communityCardsSet.add(`${card.suit}-${card.rank}`);
         });
@@ -36,8 +36,8 @@ function TexasTableCommunityCards({ gameState }: TexasTableCommunityCardsProps) 
     const communityCards = gameState.communityCards ?? [];
     const seen = new Set<string>();
     return Object.values(gameState.combinedSplitPot.hands)
-      .filter((hand: any) => hand.isWinner && hand.holeCards?.length >= 2)
-      .map((hand: any) => formatHandLabel(evaluateBestHand(hand.holeCards, communityCards)))
+      .filter((hand: Partial<GamePlayer>) => hand.isWinner && (hand.holeCards?.length ?? 0) >= 2)
+      .map((hand: Partial<GamePlayer>) => formatHandLabel(evaluateBestHand(hand.holeCards ?? [], communityCards)))
       .filter((label) => {
         if (!label || seen.has(label)) return false;
         seen.add(label);

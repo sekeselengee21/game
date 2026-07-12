@@ -1,7 +1,7 @@
 import { logger } from "../utils/logger";
 import { createContext, useEffect, useRef, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
-import { store } from "../app/store";
+import { store, type RootState } from "../app/store";
 import { setUserBalance } from "../providers/auth-slice";
 import { useMeQuery, userApi } from "../api/user";
 import { adminApi } from "../api/admin";
@@ -76,7 +76,7 @@ export function GlobalWebSocketProvider({ children }: { children: React.ReactNod
 
   // Subscribe to Redux auth state so this provider re-renders after login and
   // picks up the fresh token from localStorage (value is not used directly).
-  useSelector((state: any) => state.auth.isAuthenticated);
+  useSelector((state: RootState) => state.auth.isAuthenticated);
   const token = localStorage.getItem("accessToken");
   const { data: userInfo } = useMeQuery(undefined, { skip: !token });
   const userRef = useRef(userInfo);

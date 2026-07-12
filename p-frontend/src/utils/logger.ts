@@ -8,18 +8,22 @@ const originalConsole = {
   debug: console.debug.bind(console),
 };
 
+type LogFn = (...args: unknown[]) => void;
+
+const noop: LogFn = () => {};
+
 export const logger = {
-  log: (..._args: any[]) => {},
+  log: noop,
 
-  warn: (..._args: any[]) => {},
+  warn: noop,
 
-  error: (...args: any[]) => {
-    if (isDevelopment && args[0]?.includes?.("WebSocket error")) {
+  error: (...args: unknown[]) => {
+    if (isDevelopment && typeof args[0] === "string" && args[0].includes("WebSocket error")) {
       originalConsole.error("[CRITICAL]", ...args);
     }
   },
 
-  info: (..._args: any[]) => {},
+  info: noop,
 
-  debug: (..._args: any[]) => {},
+  debug: noop,
 };

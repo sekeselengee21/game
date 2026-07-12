@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../app/store";
 import { setAuthenticated, setUserInfo } from "../providers/auth-slice";
 import { useMeQuery } from "../api/user";
 import { AiOutlineHome, AiOutlineMenuFold, AiOutlineMenuUnfold } from "react-icons/ai";
@@ -13,7 +14,7 @@ type Props = {
 function AdminHeader({ collapsed, onToggleCollapse }: Props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const token = localStorage.getItem("accessToken");
   const { data: userInfo, refetch } = useMeQuery(undefined, { skip: !token });
 

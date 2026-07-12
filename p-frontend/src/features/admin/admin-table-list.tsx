@@ -12,8 +12,8 @@ function AdminTableList({
   fetchTables: () => void;
   editTable: (table: GameTable) => void;
   deleteTable: (table: GameTable) => void;
-  startSimulation: (args: { tableId: number }) => Promise<any>;
-  stopSimulation: (args: { tableId: number }) => Promise<any>;
+  startSimulation: (args: { tableId: number }) => Promise<unknown>;
+  stopSimulation: (args: { tableId: number }) => Promise<unknown>;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);

@@ -1,15 +1,39 @@
 import type { GamePlayer, GameCard } from "../api/game";
+import type { User } from "../api/user";
+
+// Raw seat objects exactly as serialized by the backend. Field names differ
+// from the normalized GamePlayer (e.g. Jackson emits `folded`, not `isFolded`)
+// and several fields are bot-/session-specific, so this is a deliberately loose
+// shape that the mapper reads defensively and normalizes into GamePlayer.
+interface RawSeat {
+  user?: (User & { botAvatar?: string | null }) | null;
+  seatId?: number;
+  stack?: number;
+  allIn?: boolean;
+  inHand?: boolean;
+  isFolded?: boolean;
+  folded?: boolean;
+  winnings?: number;
+  netResult?: number;
+  disconnected?: boolean;
+  timeoutActed?: boolean;
+  sittingOut?: boolean;
+  winner?: boolean;
+  hasActedShowdown?: boolean;
+  seatedAt?: number | null;
+  botAvatar?: string | null;
+}
 
 export function mapSeats(
-  tableSeats: Record<string, any>,
+  tableSeats: Record<string, RawSeat>,
   maxPlayers: number,
   sessionHoleCards: Record<string, GameCard[]> = {},
-  sessionPlayers: Record<string, any> = {},
-  sessionSeats: Record<string, any> = {},
+  sessionPlayers: GamePlayer[] = [],
+  sessionSeats: Record<string, { kickCountdownSeconds?: number | null }> = {},
 ): GamePlayer[] {
   return Array.from({ length: maxPlayers }, (_, i) => {
     const seatData = tableSeats[i.toString()] || {};
-    const playerData = sessionPlayers[i.toString()] || {};
+    const playerData = sessionPlayers[i] || {};
     // kickCountdownSeconds is computed per-hand in createSessionData and stored
     // in session.seats — it is NOT on the raw GamePlayer (table.seats).
     const sessionSeatData = sessionSeats[i.toString()] || {};
@@ -39,7 +63,7 @@ export function mapSeats(
       username: seatData.user?.username ?? "Empty",
       isDisconnected: seatData.disconnected || false,
       isTimeoutActed: seatData.timeoutActed || false,
-      isSittingOut: seatData.sittingOut,
+      isSittingOut: seatData.sittingOut ?? false,
       isWinner: seatData.winner || false,
       hasActedShowdown: seatData.hasActedShowdown || false,
       seatedAt: playerData.seatedAt ?? tableSeats[i.toString()]?.seatedAt ?? null,

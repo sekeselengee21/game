@@ -50,7 +50,7 @@ function DepositPage() {
 
   useEffect(() => {
     if (isError && error) {
-      const errMsg = (error as any)?.data?.errorMessage;
+      const errMsg = (error as { data?: { errorMessage?: string } })?.data?.errorMessage;
       setMessage("Error: " + errMsg);
     }
   }, [isError, error]);
@@ -104,7 +104,7 @@ function DepositPage() {
     try {
       await approveDeposit({ id: depositId }).unwrap();
       toast.success("Орлого амжилттай зөвшөөрөгдлөө!");
-    } catch (error) {
+    } catch {
       toast.error("Орлого зөвшөөрөхөд алдаа гарлаа!");
     }
   };
@@ -125,7 +125,7 @@ function DepositPage() {
     try {
       await denyDeposit({ id: confirmModal.depositId }).unwrap();
       toast.success("Орлого татгалзагдлаа!");
-    } catch (error) {
+    } catch {
       toast.error("Орлого татгалзахад алдаа гарлаа!");
     }
   };
