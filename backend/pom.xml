@@ -138,12 +138,15 @@
     </dependencies>
 
     <build>
+        <!--
+            Package the full resource tree into the artifact. Restricting this
+            to META-INF/native-image/** silently dropped db/migration/*.sql and
+            application.properties from the built jar, so Flyway had no scripts
+            to apply and prod booted with an empty schema.
+        -->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <includes>
-                    <include>META-INF/native-image/**</include>
-                </includes>
             </resource>
         </resources>
 
