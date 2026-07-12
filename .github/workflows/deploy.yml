@@ -77,13 +77,12 @@ jobs:
           VITE_BACKEND_URL: http://localhost:8080
         run: pnpm build
 
-  # Non-blocking: there are pre-existing lint errors (mostly no-explicit-any).
-  # This reports them without blocking deploys. Once they're cleaned up, add
-  # frontend-lint to the deploy job's `needs` to make it a hard gate.
+  # Hard gate: the codebase is at 0 lint errors. A new error (e.g. a stray
+  # `any`) fails this job and blocks the deploy. Pre-existing warnings
+  # (react-hooks / react-refresh) are warnings only and do not fail lint.
   frontend-lint:
-    name: Frontend lint (non-blocking)
+    name: Frontend lint
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
@@ -107,9 +106,9 @@ jobs:
 
   deploy:
     name: Deploy to GCP
-    # Gate on both builds so a broken jar or a frontend that won't compile never
-    # reaches the VM. Lint is intentionally not a gate yet (pre-existing errors).
-    needs: [backend-build, frontend-build]
+    # Gate on backend build, frontend build, and frontend lint so a broken jar,
+    # a frontend that won't compile, or a new lint error never reaches the VM.
+    needs: [backend-build, frontend-build, frontend-lint]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     concurrency:
