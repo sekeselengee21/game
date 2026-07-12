@@ -1,7 +1,11 @@
-name: Deploy to GCP
+name: CI & Deploy
 
-# Redeploys the production stack on the GCP VM every push to main.
-# Requires three repository secrets (Settings > Secrets and variables > Actions):
+# On every push/PR to main: build + test backend, verify Flyway migrations are
+# actually packaged in the jar, build + lint the frontend. Only on push to main,
+# and only if the backend build passes, redeploy the production stack on the VM.
+#
+# Deploy requires three repository secrets (Settings > Secrets and variables >
+# Actions):
 #   GCP_HOST     - VM public IP or hostname (e.g. 34.150.99.162)
 #   GCP_USER     - SSH username on the VM (e.g. davidcheng380)
 #   GCP_SSH_KEY  - a private SSH key whose public key is in the VM's
@@ -10,16 +14,82 @@ name: Deploy to GCP
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch: {}
 
-# Never let two deploys run at once; let an in-flight deploy finish.
-concurrency:
-  group: deploy-production
-  cancel-in-progress: false
-
 jobs:
-  deploy:
+  backend-build:
+    name: Backend build + migration check
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      # Runs surefire tests too (no -DskipTests) per architecture.md.
+      - name: Build and test
+        working-directory: backend
+        run: mvn -B clean package
+
+      # The pom.xml <resources> bug shipped a jar with no migrations and booted
+      # prod with an empty schema. Fail the build loudly if that ever recurs.
+      - name: Assert Flyway migrations are packaged in the jar
+        working-directory: backend
+        run: |
+          set -euo pipefail
+          jar="$(ls target/quarkus-app/app/*.jar | head -1)"
+          echo "Inspecting $jar"
+          listing="$(jar tf "$jar")"
+          echo "$listing" | grep -qE 'db/migration/V[0-9].*\.sql' \
+            || { echo "::error::No Flyway migration scripts packaged in $jar"; exit 1; }
+          echo "$listing" | grep -qE '(^|/)application\.properties$' \
+            || { echo "::error::application.properties not packaged in $jar"; exit 1; }
+          echo "OK: Flyway migrations and application.properties are in the jar"
+
+  frontend-build:
+    name: Frontend build + lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+          cache-dependency-path: p-frontend/pnpm-lock.yaml
+
+      - name: Install
+        working-directory: p-frontend
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Type-check and build
+        working-directory: p-frontend
+        env:
+          VITE_BACKEND_URL: http://localhost:8080
+        run: pnpm build
+
+      - name: Lint
+        working-directory: p-frontend
+        run: pnpm lint
+
+  deploy:
+    name: Deploy to GCP
+    # Gate on the backend build so a broken jar never reaches the VM.
+    needs: [backend-build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
     steps:
       - name: Redeploy over SSH
         uses: appleboy/ssh-action@v1.2.0
