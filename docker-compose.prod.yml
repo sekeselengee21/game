@@ -45,6 +45,12 @@ services:
       QUARKUS_DATASOURCE_USERNAME: ${DB_USER:-poker_prod_user}
       QUARKUS_DATASOURCE_PASSWORD: ${DB_PASSWORD:-prod_secure_pass}
       QUARKUS_REDIS_HOSTS: redis://redis:6379
+      # Email auto-promoted to ADMIN on startup / at registration (optional;
+      # blank = disabled). Set BOOTSTRAP_ADMIN_EMAIL in .env to enable.
+      APP_BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:-}
+      # To override CORS origins, uncomment and set a NON-empty value — an empty
+      # value would wipe the built-in allowlist. Defaults live in CorsFilter.java.
+      # APP_CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
     depends_on:
       db:
         condition: service_healthy

@@ -58,6 +58,20 @@ public class UserService {
     @ConfigProperty(name = "dev.manestack.jwt.issuer", defaultValue = "https://manestack.dev")
     String jwtIssuer;
 
+    // Email that should be registered/kept as ADMIN. See config.AdminBootstrap
+    // for the startup promotion of an already-registered matching user.
+    @ConfigProperty(name = "app.bootstrap.admin-email", defaultValue = "")
+    String bootstrapAdminEmail;
+
+    private String resolveInitialRole(String email) {
+        if (bootstrapAdminEmail != null && !bootstrapAdminEmail.isBlank()
+                && email != null
+                && email.trim().equalsIgnoreCase(bootstrapAdminEmail.trim())) {
+            return User.Role.ADMIN.name();
+        }
+        return User.Role.USER.name();
+    }
+
     private String generateJWT(Integer userId, String role) {
         long now = System.currentTimeMillis() / 1000L;
         long expiresAt = now + Duration.ofHours(12).toSeconds();
@@ -169,6 +183,7 @@ public class UserService {
                 .map(unused -> {
                     try {
                         String hashedPassword = BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray());
+                        String role = resolveInitialRole(user.getEmail());
                         return context.transactionResult(configuration -> {
                             DSLContext ctx = DSL.using(configuration);
                             Integer newUserId = ctx.insertInto(POKER_USER)
@@ -177,7 +192,7 @@ public class UserService {
                                     .set(POKER_USER.PASSWORD, hashedPassword)
                                     .set(POKER_USER.BANK_NAME, user.getBankName())
                                     .set(POKER_USER.ACCOUNT_NUMBER, user.getAccountNumber())
-                                    .set(POKER_USER.ROLE, User.Role.USER.name())
+                                    .set(POKER_USER.ROLE, role)
                                     .returning(POKER_USER.USER_ID)
                                     .fetchOne(POKER_USER.USER_ID);
 
@@ -190,7 +205,7 @@ public class UserService {
                                     .doNothing()
                                     .execute();
 
-                            return generateJWT(newUserId, User.Role.USER.name());
+                            return generateJWT(newUserId, role);
                         });
                     } catch (IntegrityConstraintViolationException integrityException) {
                         if (integrityException.getCause() instanceof PSQLException psqlException) {
